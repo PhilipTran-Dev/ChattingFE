@@ -3,8 +3,7 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
-# Cài đặt bỏ qua kiểm tra xung đột peer và tắt telemetry/audit
-RUN npm install --legacy-peer-deps --no-audit --no-fund
+RUN npm install --legacy-peer-deps --no-audit --no-fund --fetch-retry-maxtimeout=60000
 
 COPY . .
 RUN npm run build

@@ -19,7 +19,9 @@ jobs:
           docker rm chatting-frontend || true
 
       - name: Build Docker image
-        run: docker build -t chatting-frontend:latest .
+        run: |
+          export DOCKER_BUILDKIT=1
+          docker build --network=host -t chatting-frontend:latest .
 
       - name: Run new container
         run: |
@@ -31,7 +33,3 @@ jobs:
 
       - name: Cleanup unused images
         run: docker image prune -f
-      - name: Build Docker image
-        run: |
-          export DOCKER_BUILDKIT=1
-          docker build -t chatting-frontend:latest .
