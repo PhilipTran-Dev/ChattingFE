@@ -1,0 +1,36 @@
+name: Deploy Frontend to VMware
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: ./ChattingApp
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Stop and remove old container
+        run: |
+          docker stop chatting-frontend || true
+          docker rm chatting-frontend || true
+
+      - name: Build Docker image
+        run: docker build -t chatting-frontend:latest .
+
+      - name: Run new container
+        run: |
+          docker run -d \
+            -p 80:80 \
+            --name chatting-frontend \
+            --restart unless-stopped \
+            chatting-frontend:latest
+
+      - name: Cleanup unused images
+        run: docker image prune -f
