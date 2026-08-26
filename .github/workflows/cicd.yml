@@ -31,3 +31,7 @@ jobs:
 
       - name: Cleanup unused images
         run: docker image prune -f
+      - name: Build Docker image
+        run: |
+          export DOCKER_BUILDKIT=1
+          docker build -t chatting-frontend:latest .
