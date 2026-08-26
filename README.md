@@ -1,105 +1,119 @@
-💬 TingTing Chat App — Frontend Client
-React Vite Tailwind CSS STOMP Protocol AWS S3
+# 💬 TingTing Chat App — Frontend Client
 
-Modern, sleek, and responsive real-time chat application built with React 19, Vite, Tailwind CSS v4, and STOMP/SockJS WebSocket. Deployed seamlessly to AWS S3 Static Web Hosting via GitHub Actions.
+TingTing is a modern, responsive real-time chat application built with **React 19**, **Vite**, **Tailwind CSS v4**, and WebSocket messaging powered by **STOMP / SockJS**.
 
-📑 Table of Contents
-Features
-Tech Stack
-Project Structure
-Getting Started
-Prerequisites
-Installation
-Environment Setup
-Run Development Server
-Key Components & Flow
-CI/CD & Deployment
-Scripts
-✨ Features
-⚡ Real-Time Messaging: Bidirectional instantaneous communication over STOMP protocol via SockJS fallback.
-🚪 Room Management: Easily create rooms or join existing rooms with unique Room IDs.
-📜 Message History & Pagination: Loads existing room chat history upon entry.
-🎨 Modern Dark UI: Polished glassmorphism design styled with Tailwind CSS v4 and custom animations.
-👤 Dynamic Avatars: Unique color-coded avatar generation powered by UI-Avatars API.
-🔔 Toast Notifications: Interactive user feedback on room joining, creation, and connection status via react-hot-toast.
-📱 Responsive Layout: Fully optimized for mobile, tablet, and desktop viewports.
-🛠 Tech Stack
-UI Framework: React 19
-Build Tool: Vite 7
-Styling: Tailwind CSS v4 (with @tailwindcss/vite)
-WebSocket / STOMP Client: @stomp/stompjs & sockjs-client
-Routing: react-router-dom v7
-HTTP Client: axios
-Icons: react-icons
-Notifications: react-hot-toast
-📂 Project Structure
-ChattingApp/
-├── public/
-│   └── vite.svg
+---
+
+## 🚀 Key Features
+
+- 🏠 **Create & Join Rooms:** Easily create a new chat room or join an existing one using a unique Room ID.
+- ⚡ **Real-Time Messaging:** Send and receive instant messages seamlessly via WebSocket protocol (STOMP + SockJS).
+- 📜 **Message History:** Automatically retrieves and loads previous chat history upon entering a room.
+- 🎨 **Modern Dark UI:** Clean, elegant dark-mode interface built with Tailwind CSS v4, optimized for smooth user experience.
+- 👤 **Dynamic Avatars:** Automatically generates user avatars using the UI Avatars API based on display names.
+- 🐳 **Docker & Nginx Integration:** Multi-stage Docker build served by Nginx for minimal image size and optimal production performance.
+- ⚙️ **Automated CI/CD:** Integrated GitHub Actions workflow for continuous deployment to self-hosted servers.
+
+---
+
+## 🛠️ Tech Stack
+
+### **Core & UI**
+- **React 19** - User interface library
+- **Vite 7** - Next-generation frontend build tool
+- **Tailwind CSS v4** - Utility-first CSS framework
+- **React Router v7** - Client-side routing
+- **React Hot Toast** - Toast notifications
+- **React Icons** - System icon library
+
+### **Real-time & Network**
+- **SockJS Client & STOMP JS (`@stomp/stompjs`)** - Real-time WebSocket messaging
+- **Axios** - HTTP RESTful API client
+
+### **DevOps & Deployment**
+- **Docker** (Multi-stage build)
+- **Nginx** (SPA static file web server)
+- **GitHub Actions** (CI/CD Pipeline)
+
+---
+
+## 📁 Directory Structure
+
+```text
+ChattingAppFE/
+├── .github/workflows/   # GitHub Actions CI/CD workflows
+├── public/              # Static assets
 ├── src/
-│   ├── assets/                # Icons & static media (chat.png, react.svg)
-│   ├── Components/
-│   │   ├── ChatPage.jsx       # Real-time chat interface & message bubble rendering
-│   │   └── JoinCreateChat.jsx # Landing screen to create or join a chat room
-│   ├── Config/
-│   │   ├── AxiosHelper.js     # Axios instance & Base API URL configuration
-│   │   └── Routes.jsx         # React Router navigation configuration
-│   ├── Context/
-│   │   └── ChatContext.jsx    # Global chat state (roomId, currentUser, connected)
-│   ├── Services/
-│   │   └── RoomService.js     # API integration (createRoom, joinChat, getMessages)
-│   ├── App.css                # Custom scrollbar styles & global overrides
-│   ├── App.jsx                # Main application entry component
-│   ├── index.css              # Tailwind CSS imports
-│   └── main.jsx               # React DOM root render with Context Providers
-├── .env                       # Environment variables
-├── package.json               # Dependencies & scripts
-└── vite.config.js             # Vite configuration with Tailwind CSS plugin
-🚀 Getting Started
+│   ├── assets/          # Images and SVG icons
+│   ├── Components/      # Core UI components
+│   │   ├── ChatPage.jsx        # Main chat page view
+│   │   └── JoinCreateChat.jsx  # Room join/create form
+│   ├── Config/          # Axios & Router configurations
+│   │   ├── AxiosHelper.js
+│   │   └── Routes.jsx
+│   ├── Context/         # Global state context (ChatContext)
+│   ├── Services/        # API service layer (RoomService)
+│   ├── App.jsx
+│   └── main.jsx
+├── Dockerfile           # Multi-stage Docker configuration
+├── nginx.conf           # Nginx web server config
+├── vite.config.js       # Vite configuration
+└── package.json
+⚙️ Getting Started & Local Setup
 Prerequisites
-Node.js: v18+ or v20+
-npm or yarn / pnpm
-Installation
-Clone the repository and enter the directory:
+Node.js: >= 20.x
 
-git clone https://github.com/your-username/chatting-frontend.git
-cd chatting-frontend/ChattingApp
+npm or yarn
+
+Installation Steps
+Clone the repository:
+
+Bash
+git clone <YOUR_REPOSITORY_URL>
+cd ChattingAppFE
 Install dependencies:
 
+Bash
 npm install
-Environment Setup
-Create or update .env in the ChattingApp root:
+Configure Environment Variables (.env):
+Create a .env file in the project root directory and set your Backend API URL:
 
+Đoạn mã
 VITE_BACKEND_URL=http://localhost:8080
-(Point to your backend server URL or AWS EC2 IP)
+(If not provided, it defaults to http://192.168.1.9:8080).
 
-Run Development Server
+Run Development Server:
+
+Bash
 npm run dev
-Open http://localhost:5173 in your browser.
+Access the app at: http://localhost:5173
 
-🧩 Key Components & Flow
-Global State (ChatContext.jsx):
-Manages active roomId, currentUser, and connected status across route changes.
-Join / Create Screen (JoinCreateChat.jsx):
-Validates input fields and communicates with /api/v1/rooms endpoints.
-Navigates to /chat upon successful authentication and room join.
-Chat Room Interface (ChatPage.jsx):
-Connects to STOMP over SockJS via ${baseURL}/chat.
-Subscribes to /topic/room/{roomId} for incoming messages.
-Publishes messages to /app/sendMessage/{roomId}.
-Automatically auto-scrolls down when new messages arrive.
-🔄 CI/CD & Deployment
-Automated deployment is configured with GitHub Actions (.github/workflows/cicd.yml):
+Build for Production:
 
-Triggers: Pushes to main branch.
-Workflow:
-Installs Node.js & dependencies.
-Runs npm run build to generate static production bundle in dist/.
-Configures AWS Credentials using GitHub Secrets (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY).
-Synchronizes the dist/ directory to Amazon S3 (s3://tingting-live) with --delete flag for static hosting.
-📜 Scripts
-Command	Description
-npm run dev	Starts Vite local development server
-npm run build	Compiles and optimizes assets into production dist/ bundle
-npm run preview	Locally preview the production build
-npm run lint	Runs ESLint to check for code quality and syntax issues
+Bash
+npm run build
+🐳 Deployment with Docker & Nginx
+To containerize and run the application using Docker:
+
+Build Docker Image:
+
+Bash
+docker build -t chatting-frontend:latest .
+Run Container:
+
+Bash
+docker run -d -p 80:80 --name chatting-frontend chatting-frontend:latest
+Open your browser at http://localhost.
+
+🔄 CI/CD Pipeline
+This project uses GitHub Actions (.github/workflows/cicd.yml) to automate deployment upon every push to the main branch:
+
+Checkout: Pulls the latest source code.
+
+Clean: Stops and removes the existing container (chatting-frontend).
+
+Build: Builds a fresh Docker image using the multi-stage Dockerfile.
+
+Deploy: Runs the new container mapped to port 80 with --restart unless-stopped.
+
+Prune: Automatically cleans up unused dangling Docker images to save disk space.
