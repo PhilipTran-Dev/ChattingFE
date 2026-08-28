@@ -29,7 +29,7 @@ const ChatPage = () => {
   const [input, setInput] = useState("");
   const inputRef = useRef(null);
   const chatBoxRef = useRef(null);
-  const [stompClient, setStompClient] = useState(null);
+  const stompClientRef = useRef(null);
 
   const formatTime = (isoString) => {
     if (!isoString) return "";
@@ -58,8 +58,8 @@ const ChatPage = () => {
     const connectToWebSocket = () => {
       const sock = new SockJS(`${baseURL}/chat`);
       const client = Stomp.over(sock);
+      stompClientRef.current = client;
       client.connect({}, () => {
-        setStompClient(client);
         toast.success("Connected to chat server");
         client.subscribe(`/topic/room/${roomId}`, (message) => {
           const newMessage = JSON.parse(message.body);
@@ -71,20 +71,19 @@ const ChatPage = () => {
       connectToWebSocket();
     }
     return () => {
-      if (stompClient) {
-        stompClient.disconnect();
-      }
+      stompClientRef.current?.disconnect();
+      stompClientRef.current = null;
     };
   }, [roomId]);
 
   const sendMessage = async () => {
-    if (stompClient && connected && input.trim()) {
+    if (stompClientRef.current && connected && input.trim()) {
       const message = {
         sender: currentUser,
         content: input,
         roomId: roomId,
       };
-      stompClient.send(
+      stompClientRef.current.send(
         `/app/sendMessage/${roomId}`,
         {},
         JSON.stringify(message)
@@ -94,7 +93,8 @@ const ChatPage = () => {
   };
 
   const handleLogout = () => {
-    stompClient.disconnect();
+    stompClientRef.current?.disconnect();
+    stompClientRef.current = null;
     setConnected(false);
     setRoomId("");
     setCurrentUser("");

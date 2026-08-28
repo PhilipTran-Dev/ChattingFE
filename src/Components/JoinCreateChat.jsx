@@ -13,14 +13,8 @@ function JoinCreateChat() {
     roomId: "",
   });
 
-  const {
-    roomId,
-    userName,
-    connected,
-    setRoomId,
-    setCurrentUser,
-    setConnected,
-  } = useChatContext();
+  const { connected, setRoomId, setCurrentUser, setConnected } =
+    useChatContext();
 
   const navigate = useNavigate();
 
@@ -31,8 +25,16 @@ function JoinCreateChat() {
     });
   };
 
-  function validatedForm() {
-    if (detail.roomId === "" || detail.userName === "") {
+  function validateJoinForm() {
+    if (detail.roomId.trim() === "" || detail.userName.trim() === "") {
+      toast.error("Invalid Input !!");
+      return false;
+    }
+    return true;
+  }
+
+  function validateCreateForm() {
+    if (detail.roomId.trim() === "") {
       toast.error("Invalid Input !!");
       return false;
     }
@@ -40,11 +42,11 @@ function JoinCreateChat() {
   }
 
   async function joinChat() {
-    if (validatedForm()) {
+    if (validateJoinForm()) {
       try {
-        const room = await joinChatApi(detail.roomId);
+        const room = await joinChatApi(detail.roomId.trim());
         toast.success(`Joined room: ${room.roomId}`);
-        setCurrentUser(detail.userName);
+        setCurrentUser(detail.userName.trim());
         setRoomId(room.roomId);
         setConnected(true);
         navigate("/chat");
@@ -56,16 +58,14 @@ function JoinCreateChat() {
   }
 
   async function createRoom() {
-    if (validatedForm()) {
-      console.log(detail);
+    if (validateCreateForm()) {
       try {
-        const response = await createRoomApi(detail.roomId);
-        console.log(response);
+        const response = await createRoomApi(detail.roomId.trim());
         toast.success(`Room created with ID: ${response.roomId}`);
         // Tùy chọn: Tự động join luôn sau khi tạo (nếu muốn logic cũ thì giữ nguyên)
       } catch (error) {
         console.error("Error creating room:", error);
-        if (error.status === 400) {
+        if (error.response?.status === 400) {
           toast.error("Room ID already exists. Please choose a different ID.");
         }
       }
