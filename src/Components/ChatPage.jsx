@@ -59,13 +59,20 @@ const ChatPage = () => {
       const sock = new SockJS(`${baseURL}/chat`);
       const client = Stomp.over(sock);
       stompClientRef.current = client;
-      client.connect({}, () => {
-        toast.success("Connected to chat server");
-        client.subscribe(`/topic/room/${roomId}`, (message) => {
-          const newMessage = JSON.parse(message.body);
-          setMessages((prev) => [...prev, newMessage]);
-        });
-      });
+      client.connect(
+        {},
+        () => {
+          toast.success("Connected to chat server");
+          client.subscribe(`/topic/room/${roomId}`, (message) => {
+            const newMessage = JSON.parse(message.body);
+            setMessages((prev) => [...prev, newMessage]);
+          });
+        },
+        (error) => {
+          console.error("WebSocket connection error:", error);
+          toast.error("Lost connection to chat server");
+        }
+      );
     };
     if (connected && roomId) {
       connectToWebSocket();
@@ -74,7 +81,7 @@ const ChatPage = () => {
       stompClientRef.current?.disconnect();
       stompClientRef.current = null;
     };
-  }, [roomId]);
+  }, [roomId, connected]);
 
   const sendMessage = async () => {
     if (stompClientRef.current && connected && input.trim()) {
